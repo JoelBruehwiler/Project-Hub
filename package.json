@@ -1,0 +1,12 @@
+{
+  "name": "project-hub",
+  "version": "1.0.0",
+  "description": "Projekt-Hub für Elektroplanung: Projekte, Pendenzen, Kontakte, Kunden, Wissen und Wohnungen an einem Ort.",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "import:notion": "node tools/import-notion.js"
+  },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED"
+}
