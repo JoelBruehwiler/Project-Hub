@@ -6,7 +6,16 @@ The interface is in German.
 
 No dependencies and no build step. You only need Node.js 18 or newer.
 
-## Start
+## Start with automatic updates (recommended)
+
+1. Install [GitHub Desktop](https://desktop.github.com) and [Node.js](https://nodejs.org) (LTS) once.
+2. In GitHub Desktop: **File → Clone repository** → `project-hub`, then pick the branch in use.
+3. Double-click **`start-hub.bat`** (Windows) or **`start-hub.command`** (Mac).
+   Every start fetches the latest version first, then opens the hub in the browser.
+
+Your data in `data/` is untouched by updates.
+
+## Start manually
 
 ```bash
 npm start            # → http://localhost:3000
