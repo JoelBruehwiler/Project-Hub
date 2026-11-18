@@ -837,6 +837,24 @@ document.addEventListener('change', async (e) => {
     try {
       const data = JSON.parse(await file.text());
       if (!COLLECTION_KEYS.some((k) => Array.isArray(data[k]))) throw new Error('Keine Hub-Daten gefunden');
+      if (data._mode === 'merge') {
+        // add-only import: keeps existing data, skips duplicates (same id, or same e-mail for contacts/clients)
+        const plan = COLLECTION_KEYS.map((k) => {
+          const ids = new Set(rows(k).map((r) => r.id));
+          const mails = new Set(rows(k).map((r) => String(r.email || '').toLowerCase()).filter(Boolean));
+          const fresh = (data[k] || []).filter((r) => r && typeof r.id === 'string' && !ids.has(r.id)
+            && !(r.email && mails.has(String(r.email).toLowerCase())));
+          return [k, fresh, (data[k] || []).length - fresh.length];
+        }).filter(([, fresh, dup]) => fresh.length || dup);
+        const summary = plan.map(([k, fresh, dup]) => `${C(k).label}: ${fresh.length} neu${dup ? `, ${dup} schon vorhanden` : ''}`).join('\n');
+        if (!confirm(`Einträge hinzufügen (bestehende Daten bleiben erhalten):\n\n${summary}\n\nFortfahren?`)) return;
+        const merged = { ...Store.db };
+        for (const [k, fresh] of plan) merged[k] = [...rows(k), ...fresh];
+        await Store.replaceAll(merged);
+        toast(`${plan.reduce((a, [, f]) => a + f.length, 0)} Einträge hinzugefügt`);
+        render();
+        return;
+      }
       const counts = COLLECTION_KEYS.map((k) => `${C(k).label}: ${(data[k] || []).length}`).join(', ');
       if (!confirm(`Import ersetzt alle vorhandenen Daten.\n\n${counts}\n\nFortfahren?`)) return;
       await Store.replaceAll({ ...data, settings: { ...Store.db.settings, ...(data.settings || {}) } });

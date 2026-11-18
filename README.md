@@ -51,6 +51,8 @@ Every list can be exported as **CSV for Excel**. Under Settings you can back up 
 3. `node tools/import-notion.js <unzipped-folder> notion-import.json`
 4. In the hub, go to **Einstellungen → JSON importieren…** and pick `notion-import.json`.
 
+**Add without replacing:** if a JSON file contains `"_mode": "merge"`, the import only adds new entries. Duplicates (same ID or same e-mail address) are skipped.
+
 ## Data and backups
 
 - All data is stored in `data/db.json`. Every day the server copies the file to `data/backups/db-YYYY-MM-DD.json`.
